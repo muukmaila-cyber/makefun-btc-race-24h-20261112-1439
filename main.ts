@@ -6,8 +6,12 @@
 //
 // Mode A — deep dip: buy when the latest close is at least 1.5% below the
 // highest close of the last 120 bars AND the close is green (above the
-// previous close: the dip has stopped falling). Take profit +0.5%, stop loss
-// -1.0% from the entry close.
+// previous close: the dip has stopped falling). Take profit +0.85%, stop loss
+// -1.0% from the entry close. The take-profit sits just under the bounce
+// ceiling this market shows: after a -1.5% dip the bounce peaked at +0.88%
+// on the new dev window and +1.00% on the old one, so +0.85% banks almost
+// all of it; +0.90% never fills on the new window and the trade rides to its
+// stop instead, which is why the take-profit is 85, not 90.
 //
 // Mode B — pullback in a flat/up market: buy when the latest close is at
 // least 0.6% below the highest close of the last 60 bars AND the close is at
@@ -53,7 +57,7 @@ const SYMBOL = 'CBBTC';
 const LOOKBACK_LONG = 120;
 const LOOKBACK_SHORT = 60;
 const DIP_BPS = 150n;
-const DIP_TP_BPS = 50n;
+const DIP_TP_BPS = 85n;
 const DIP_SL_BPS = 100n;
 const PULLBACK_BPS = 60n;
 const PULLBACK_TP_BPS = 100n;

@@ -56,10 +56,12 @@
 //   - Every kit baseline loses on this dev window (buy-and-hold -$25.97,
 //     rsi-bollinger -$46.52, ema-cross -$95.88).
 //   - Local grade of this file (grade-local, --driver process): new dev window
-//     net PnL +$14.291982, 5 trades, win rate 0.67, max drawdown 0.0039;
-//     previous race's dev window: +$5.598682, 2 trades, win rate 1.00, max
-//     drawdown 0.0100. Both reproduced byte for byte. Dev gate needs net PnL
-//     above $0; this passes on both windows.
+//     net PnL +$15.982807, 7 trades, win rate 0.75, max drawdown 0.0039;
+//     previous race's dev window: +$2.030418, 4 trades, win rate 0.50, max
+//     drawdown 0.0117. Both reproduced. Dev gate needs net PnL above $0;
+//     this passes on both windows. Mode O's quarter size is what keeps the
+//     old window positive: the opening trade stops out there for about
+//     -$3.15 and Mode A recovers it.
 //
 // vendor/makefun-bars.ts is a copy of the kit SDK shim.
 import { runBars, type BarsState } from './vendor/makefun-bars.ts';

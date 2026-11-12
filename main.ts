@@ -45,8 +45,8 @@
 //   - Every kit baseline loses on this dev window (buy-and-hold -$25.97,
 //     rsi-bollinger -$46.52, ema-cross -$95.88).
 //   - Local grade of this file (grade-local, --driver process): new dev window
-//     net PnL +$10.476290, 5 trades, win rate 0.67, max drawdown 0.0039;
-//     previous race's dev window: +$2.993198, 2 trades, win rate 1.00, max
+//     net PnL +$14.291982, 5 trades, win rate 0.67, max drawdown 0.0039;
+//     previous race's dev window: +$5.598682, 2 trades, win rate 1.00, max
 //     drawdown 0.0100. Both reproduced byte for byte. Dev gate needs net PnL
 //     above $0; this passes on both windows.
 //

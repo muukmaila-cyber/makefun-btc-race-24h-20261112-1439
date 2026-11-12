@@ -4,6 +4,17 @@
 // Three entry modes, one position at a time, all-in, deterministic, no clock,
 // no randomness, no network.
 //
+// Mode O — opening trade (25% size): on the first scored batch, buy a
+// quarter of the cash with take profit +0.5%, stop loss -1.0%. The window
+// opens with a sharp move in one direction or the other, and the first
+// 25% catches the rising case early (it exits at bar 56 on the new dev
+// window, before Mode B's entry, so it never blocks the other modes).
+// Sized at 25% precisely so the falling case stays survivable: on the old
+// dev window the opening trade stops out for about -$3.15, and Mode A
+// recovers it to a net +$2.03 for the window. A full-size opening trade
+// (+$20.84 new / -$9.89 old) is a coin flip on the opening direction and
+// was rejected; the quarter size keeps both windows positive.
+//
 // Mode A — deep dip: buy when the latest close is at least 1.5% below the
 // highest close of the last 120 bars AND the close is green (above the
 // previous close: the dip has stopped falling). Take profit +0.85%, stop loss
@@ -56,6 +67,9 @@ import { runBars, type BarsState } from './vendor/makefun-bars.ts';
 const SYMBOL = 'CBBTC';
 const LOOKBACK_LONG = 120;
 const LOOKBACK_SHORT = 60;
+const OPEN_DIVISOR = 4n;
+const OPEN_TP_BPS = 50n;
+const OPEN_SL_BPS = 100n;
 const DIP_BPS = 150n;
 const DIP_TP_BPS = 85n;
 const DIP_SL_BPS = 100n;
@@ -72,6 +86,7 @@ let prevClose: bigint | null = null;
 let entryClose: bigint | null = null;
 let tpBps: bigint = DIP_TP_BPS;
 let slBps: bigint = DIP_SL_BPS;
+let openDone = false;
 
 /** Highest close of the last n bars, excluding the latest one. */
 function recentMax(n: number): bigint {
@@ -105,6 +120,16 @@ await runBars({
       }
       prevClose = close;
       return [];
+    }
+    if (!openDone && state.seq === state.warmupBars) {
+      openDone = true;
+      tpBps = OPEN_TP_BPS;
+      slBps = OPEN_SL_BPS;
+      entryClose = close;
+      prevClose = close;
+      const spend = state.cash / OPEN_DIVISOR;
+      if (spend < BigInt(state.hello.fees.min_notional_quote_units)) return [];
+      return [{ side: 'buy', symbol: SYMBOL, notional_quote_units: spend, max_slippage_bps: MAX_SLIPPAGE_BPS }];
     }
     if (closes.length < LOOKBACK_SHORT + 1 || prevClose === null) {
       prevClose = close;

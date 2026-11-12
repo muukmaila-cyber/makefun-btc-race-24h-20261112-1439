@@ -4,16 +4,15 @@
 // Three entry modes, one position at a time, all-in, deterministic, no clock,
 // no randomness, no network.
 //
-// Mode O — opening trade (25% size): on the first scored batch, buy a
-// quarter of the cash with take profit +0.5%, stop loss -1.0%. The window
-// opens with a sharp move in one direction or the other, and the first
-// 25% catches the rising case early (it exits at bar 56 on the new dev
-// window, before Mode B's entry, so it never blocks the other modes).
-// Sized at 25% precisely so the falling case stays survivable: on the old
-// dev window the opening trade stops out for about -$3.15, and Mode A
-// recovers it to a net +$2.03 for the window. A full-size opening trade
-// (+$20.84 new / -$9.89 old) is a coin flip on the opening direction and
-// was rejected; the quarter size keeps both windows positive.
+// Mode O — opening trade (FULL size): on the first scored batch, buy ALL
+// the cash with take profit +0.5%, stop loss -1.0%. This is the gamble the
+// user asked to try: it catches the opening move whole, but if the window
+// opens falling the trade stops out for about -$12.60 and the day starts
+// deep in the red. Replica: new dev +$20.84, old dev -$9.89 (the old window
+// opens falling). The quarter-size version (v4) keeps both windows positive;
+// this full-size version does NOT — it is a coin flip on the opening
+// direction, kept here only because the user explicitly asked to try
+// submitting it.
 //
 // Mode A — deep dip: buy when the latest close is at least 1.5% below the
 // highest close of the last 120 bars AND the close is green (above the
@@ -69,7 +68,7 @@ import { runBars, type BarsState } from './vendor/makefun-bars.ts';
 const SYMBOL = 'CBBTC';
 const LOOKBACK_LONG = 120;
 const LOOKBACK_SHORT = 60;
-const OPEN_DIVISOR = 4n;
+const OPEN_DIVISOR = 1n;
 const OPEN_TP_BPS = 50n;
 const OPEN_SL_BPS = 100n;
 const DIP_BPS = 150n;
